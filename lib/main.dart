@@ -30,16 +30,23 @@ class _TicTacToePageState extends State<TicTacToePage> {
   List<List<String>> board = List.generate(3, (_) => List.filled(3, ' '));
 
   int count = 1;
+  bool checker = false;
 
   @override
   Widget build(BuildContext context) {
     Icon getterAndSetter(int r, int c) {
-      if (count <= 9) {
+      if (count <= 9 && (!checker)) {
         if (count % 2 != 0) {
           if (board[r][c] == ' ') {
             board[r][c] = 'X';
             count += 1;
             str = 'O\'s move';
+            printBoard(board);
+            if (winnerGetter(board)) {
+
+              str = 'Player X wins!';
+              checker = true;
+            }
             return cross;
           } else if (board[r][c] != ' ') {
             str = 'invalid move ';
@@ -50,6 +57,11 @@ class _TicTacToePageState extends State<TicTacToePage> {
             board[r][c] = 'O';
             count += 1;
             str = 'X\'s move';
+            printBoard(board);
+            if (winnerGetter(board)) {
+              str = 'Player O wins ';
+              checker = true;
+            }
             return zero;
           } else if (board[r][c] != ' ') {
             str = 'invalid move';
@@ -57,8 +69,12 @@ class _TicTacToePageState extends State<TicTacToePage> {
           }
         }
       } else if (board[r][c] == 'X') {
+        str = 'Start Again!';
         return cross;
-      } else if (board[r][c] == 'O') return zero;
+      } else if (board[r][c] == 'O') {
+        str = 'Start Again!';
+        return zero;
+      }
     }
 
     return Scaffold(
@@ -88,7 +104,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(
+                containerSpace(color: (row1(board)||col1(board)||diag1(board))?Colors.green:Colors.white,
                   child: empty1,
                   onTap: () {
                     setState(() {
@@ -96,7 +112,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row1(board)||col2(board))?Colors.green:Colors.white,
                   child: empty2,
                   onTap: () {
                     setState(() {
@@ -104,7 +120,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row1(board)||col3(board)||diag2(board))?Colors.green:Colors.white,
                   child: empty3,
                   onTap: () {
                     setState(() {
@@ -117,7 +133,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(
+                containerSpace(color: (row2(board)||col1(board))?Colors.green:Colors.white,
                   child: empty4,
                   onTap: () {
                     setState(() {
@@ -125,7 +141,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row2(board)||col2(board)||diag1(board)||diag2(board))?Colors.green:Colors.white,
                   child: empty5,
                   onTap: () {
                     setState(() {
@@ -133,7 +149,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row2(board)||col3(board))?Colors.green:Colors.white,
                   child: empty6,
                   onTap: () {
                     setState(() {
@@ -146,7 +162,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(
+                containerSpace(color: (row3(board)||col1(board)||diag2(board))?Colors.green:Colors.white,
                   child: empty7,
                   onTap: () {
                     setState(() {
@@ -154,7 +170,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row3(board)||col2(board))?Colors.green:Colors.white,
                   child: empty8,
                   onTap: () {
                     setState(() {
@@ -162,7 +178,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                     });
                   },
                 ),
-                containerSpace(
+                containerSpace(color: (row3(board)||col3(board)||diag1(board))?Colors.green:Colors.white,
                   child: empty9,
                   onTap: () {
                     setState(() {
@@ -175,6 +191,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
             containerSpace(
               onTap: () {
                 setState(() {
+                  checker = false;
                   str = 'X\'s move';
                   count = 1;
                   board = List.generate(3, (_) => List.filled(3, ' '));
