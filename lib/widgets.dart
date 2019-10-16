@@ -81,7 +81,7 @@ bool winnerGetter(List<List<String>> x) {
   }
 }
 
-class containerSpace extends StatelessWidget {
+class ContainerSpace extends StatelessWidget {
   final Function onTap;
   final double height;
   final double width;
@@ -89,7 +89,7 @@ class containerSpace extends StatelessWidget {
   final Widget child;
   final Color color;
 
-  containerSpace(
+  ContainerSpace(
       {this.onTap,
       this.height = 90,
       this.width = 90,
