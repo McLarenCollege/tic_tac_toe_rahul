@@ -28,55 +28,104 @@ class _TicTacToePageState extends State<TicTacToePage> {
     color: Color(0xFF3C3F41),
   );
   List<List<String>> board = List.generate(3, (_) => List.filled(3, ' '));
+  String currentPlayer = 'X';
 
+//  List<List<Icon>> cellIcons = board.
   int count = 1;
   bool checker = false;
 
-  @override
-  Widget build(BuildContext context) {
-    Icon getterAndSetter(int r, int c) {
-      if (count <= 9 && (!checker)) {
-        if (count % 2 != 0) {
-          if (board[r][c] == ' ') {
-            board[r][c] = 'X';
-            count += 1;
-            str = 'O\'s move';
-            printBoard(board);
-            if (winnerGetter(board)) {
+  String boardStatus() {
+    printBoard(board);
+    // Draw: play again
+    // O's Move
+    // X's Move
+    // O wins
+    // X wins
+    if (checkDraw()) {
+      return 'Draw: Play Again';
+    }
+    if (winnerGetter(board)) {
+      return '$currentPlayer wins';
+    }
+    return '$currentPlayer\'s move';
+  }
 
-              str = 'Player X wins!';
-              checker = true;
-            }
-            return cross;
-          } else if (board[r][c] != ' ') {
-            str = 'invalid move ';
-            return zero;
-          }
-        } else if (count % 2 == 0) {
-          if (board[r][c] == ' ') {
-            board[r][c] = 'O';
-            count += 1;
-            str = 'X\'s move';
-            printBoard(board);
-            if (winnerGetter(board)) {
-              str = 'Player O wins ';
-              checker = true;
-            }
-            return zero;
-          } else if (board[r][c] != ' ') {
-            str = 'invalid move';
-            return cross;
-          }
-        }
-      } else if (board[r][c] == 'X') {
-        str = 'Start Again!';
-        return cross;
-      } else if (board[r][c] == 'O') {
-        str = 'Start Again!';
-        return zero;
+  bool checkDraw() {
+    return !winnerGetter(board) && isBoardFull();
+  }
+
+  Widget getIcon(int row, int column) {
+    if (board[row][column] != ' ') {
+      if (board[row][column] == 'X') {
+        return Icon(
+          Icons.close,
+          size: 80,
+          color: Color(0xFF3C3F41),
+        );
+      } else {
+        return Icon(
+          FontAwesomeIcons.circle,
+          size: 70,
+          color: Color(0xFF3C3F41),
+        );
       }
     }
+  }
 
+  bool isBoardFull() {
+    for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board[i].length; i++) {
+        if (board[i][j] == ' ') {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  Icon getTicTacIcon(int r, int c) {
+    if (count <= 9 && (!checker)) {
+      if (count % 2 != 0) {
+        if (board[r][c] == ' ') {
+          board[r][c] = 'X';
+          count += 1;
+          str = 'O\'s move';
+          if (winnerGetter(board)) {
+            str = 'Player X wins!';
+            checker = true;
+          }
+          return cross;
+        } else if (board[r][c] != ' ') {
+          str = 'invalid move ';
+          return zero;
+        }
+      } else if (count % 2 == 0) {
+        if (board[r][c] == ' ') {
+          board[r][c] = 'O';
+          count += 1;
+          str = 'X\'s move';
+          printBoard(board);
+          if (winnerGetter(board)) {
+            str = 'Player O wins ';
+            checker = true;
+          }
+          return zero;
+        } else if (board[r][c] != ' ') {
+          str = 'invalid move';
+          return cross;
+        }
+      }
+    } else if (board[r][c] == 'X') {
+      str = 'Start Again!';
+      return cross;
+    } else if (board[r][c] == 'O') {
+      str = 'Start Again!';
+      return zero;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -95,7 +144,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                   fontWeight: FontWeight.bold),
             ),
             Text(
-              str,
+              boardStatus(),
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 25,
@@ -104,27 +153,39 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(color: (row1(board)||col1(board)||diag1(board))?Colors.green:Colors.white,
-                  child: empty1,
+                containerSpace(
+                  color: (row1(board) || col1(board) || diag1(board))
+                      ? Colors.green
+                      : Colors.white,
+                  child: getIcon(0, 0),
                   onTap: () {
                     setState(() {
-                      empty1 = getterAndSetter(0, 0);
+                      board[0][0] = currentPlayer;
+                      currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
                     });
                   },
                 ),
-                containerSpace(color: (row1(board)||col2(board))?Colors.green:Colors.white,
-                  child: empty2,
+                containerSpace(
+                  color: (row1(board) || col2(board))
+                      ? Colors.green
+                      : Colors.white,
+                  child: getIcon(0, 1),
                   onTap: () {
                     setState(() {
-                      empty2 = getterAndSetter(0, 1);
+                      board[0][1] = currentPlayer;
+                      currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
                     });
                   },
                 ),
-                containerSpace(color: (row1(board)||col3(board)||diag2(board))?Colors.green:Colors.white,
-                  child: empty3,
+                containerSpace(
+                  color: (row1(board) || col3(board) || diag2(board))
+                      ? Colors.green
+                      : Colors.white,
+                  child: getIcon(0, 2),
                   onTap: () {
                     setState(() {
-                      empty3 = getterAndSetter(0, 2);
+                      board[0][2] = currentPlayer;
+                      currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
                     });
                   },
                 ),
@@ -133,27 +194,39 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(color: (row2(board)||col1(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row2(board) || col1(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty4,
                   onTap: () {
                     setState(() {
-                      empty4 = getterAndSetter(1, 0);
+                      empty4 = getTicTacIcon(1, 0);
                     });
                   },
                 ),
-                containerSpace(color: (row2(board)||col2(board)||diag1(board)||diag2(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row2(board) ||
+                          col2(board) ||
+                          diag1(board) ||
+                          diag2(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty5,
                   onTap: () {
                     setState(() {
-                      empty5 = getterAndSetter(1, 1);
+                      empty5 = getTicTacIcon(1, 1);
                     });
                   },
                 ),
-                containerSpace(color: (row2(board)||col3(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row2(board) || col3(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty6,
                   onTap: () {
                     setState(() {
-                      empty6 = getterAndSetter(1, 2);
+                      empty6 = getTicTacIcon(1, 2);
                     });
                   },
                 ),
@@ -162,27 +235,36 @@ class _TicTacToePageState extends State<TicTacToePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                containerSpace(color: (row3(board)||col1(board)||diag2(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row3(board) || col1(board) || diag2(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty7,
                   onTap: () {
                     setState(() {
-                      empty7 = getterAndSetter(2, 0);
+                      empty7 = getTicTacIcon(2, 0);
                     });
                   },
                 ),
-                containerSpace(color: (row3(board)||col2(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row3(board) || col2(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty8,
                   onTap: () {
                     setState(() {
-                      empty8 = getterAndSetter(2, 1);
+                      empty8 = getTicTacIcon(2, 1);
                     });
                   },
                 ),
-                containerSpace(color: (row3(board)||col3(board)||diag1(board))?Colors.green:Colors.white,
+                containerSpace(
+                  color: (row3(board) || col3(board) || diag1(board))
+                      ? Colors.green
+                      : Colors.white,
                   child: empty9,
                   onTap: () {
                     setState(() {
-                      empty9 = getterAndSetter(2, 2);
+                      empty9 = getTicTacIcon(2, 2);
                     });
                   },
                 ),
